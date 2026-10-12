@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WPOHSTORE - Loja Online | Sua Experiência Completa de Compras</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#FFC700',
+                            gold: '#FFB800',
+                            dark: '#0D0D0F',
+                            card: '#16161A',
+                            border: '#2A2A32'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0D0D0F;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 20px rgba(255, 199, 0, 0.25);
+        }
+
+        .gold-glow-hover:hover {
+            box-shadow: 0 0 25px rgba(255, 199, 0, 0.4);
+            border-color: #FFC700;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #FFF 0%, #FFC700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-gradient-bg {
+            background: linear-gradient(135deg, #FFC700 0%, #FF9900 100%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0D0D0F;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2A2A32;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFC700;
+        }
+
+        /* Modal Overlay */
+        .cart-drawer {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-yellow selection:text-black">
+
+    <div class="bg-gradient-to-r from-amber-600 via-brand-yellow to-amber-500 text-black py-2 px-4 text-center text-xs md:text-sm font-bold tracking-wide">
+        <i class="fa-solid fa-truck-fast mr-2"></i> FRETE GRÁTIS PARA TODO O BRASIL EM COMPRAS ACIMA DE R$ 199,00! 🚀
+    </div>
+
+    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur-md border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-4">
+                
+                <!-- Logo -->
+                <a href="#" onclick="filterCategory('all')" class="flex items-center gap-3 group">
+                    <img src="Gemini_Generated_Image_9f77il9f77il9f77.jpg" 
+                         alt="WPOHSTORE Logo" 
+                         class="h-12 md:h-14 w-auto rounded-lg object-contain transition-transform duration-300 group-hover:scale-105"
+                         onerror="this.onerror=null; this.src='https://placehold.co/200x80/16161A/FFC700?text=WPOHSTORE'">
+                </a>
+
+                <!-- Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md relative">
+                    <input type="text" 
+                           id="searchInput"
+                           onkeyup="handleSearch()"
+                           placeholder="Buscar produtos na Wpohstore..." 
+                           class="w-full bg-brand-card border border-brand-border text-white text-sm rounded-full py-2.5 pl-4 pr-10 focus:outline-none focus:border-brand-yellow transition-all">
+                    <button class="absolute right-3 top-2.5 text-gray-400 hover:text-brand-yellow">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+                <!-- Action Icons -->
+                <div class="flex items-center space-x-4 md:space-x-6">
+                    <button onclick="toggleFavorites()" class="relative text-gray-300 hover:text-brand-yellow transition-colors">
+                        <i class="fa-regular fa-heart text-xl md:text-2xl"></i>
+                        <span id="favCount" class="absolute -top-2 -right-2 bg-brand-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+
+                    <button onclick="openCart()" class="relative text-gray-300 hover:text-brand-yellow transition-colors flex items-center gap-2">
+                        <div class="relative">
+                            <i class="fa-solid fa-cart-shopping text-xl md:text-2xl"></i>
+                            <span id="cartCount" class="absolute -top-2 -right-2 bg-brand-yellow text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                        </div>
+                        <span class="hidden lg:inline text-sm font-semibold text-white ml-1" id="cartHeaderTotal">R$ 0,00</span>
+                    </button>
+
+                    <button class="hidden sm:flex items-center gap-2 text-sm text-gray-300 hover:text-brand-yellow border border-brand-border px-3 py-1.5 rounded-full">
+                        <i class="fa-regular fa-user"></i>
+                        <span>Entrar</span>
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-2xl text-gray-300 hover:text-brand-yellow">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Search Bar -->
+            <div class="md:hidden pb-4">
+                <input type="text" 
+                       id="searchInputMobile"
+                       onkeyup="handleSearchMobile()"
+                       placeholder="Buscar na Wpohstore..." 
+                       class="w-full bg-brand-card border border-brand-border text-white text-sm rounded-full py-2 px-4 focus:outline-none focus:border-brand-yellow">
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="hidden md:block bg-brand-card/50 border-t border-brand-border/50 text-sm font-medium">
+            <div class="max-w-7xl mx-auto px-4 flex justify-center space-x-8 py-3">
+                <button onclick="filterCategory('all')" class="hover:text-brand-yellow transition-colors text-brand-yellow">Início</button>
+                <button onclick="filterCategory('tecnologia')" class="hover:text-brand-yellow transition-colors">Tecnologia</button>
+                <button onclick="filterCategory('eletronicos')" class="hover:text-brand-yellow transition-colors">Eletrônicos</button>
+                <button onclick="filterCategory('acessorios')" class="hover:text-brand-yellow transition-colors">Acessórios VIP</button>
+                <button onclick="filterCategory('promocao')" class="hover:text-brand-yellow transition-colors text-amber-400 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-fire text-xs"></i> Ofertas
+                </button>
+                <a href="#about" class="hover:text-brand-yellow transition-colors">Sobre Nós</a>
+                <a href="#contact" class="hover:text-brand-yellow transition-colors">Contato</a>
+            </div>
+        </nav>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-brand-card border-b border-brand-border px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+            <button onclick="filterCategory('all'); toggleMobileMenu();" class="block w-full text-left py-2 hover:text-brand-yellow">Início</button>
+            <button onclick="filterCategory('tecnologia'); toggleMobileMenu();" class="block w-full text-left py-2 hover:text-brand-yellow">Tecnologia</button>
+            <button onclick="filterCategory('eletronicos'); toggleMobileMenu();" class="block w-full text-left py-2 hover:text-brand-yellow">Eletrônicos</button>
+            <button onclick="filterCategory('acessorios'); toggleMobileMenu();" class="block w-full text-left py-2 hover:text-brand-yellow">Acessórios VIP</button>
+            <button onclick="filterCategory('promocao'); toggleMobileMenu();" class="block w-full text-left py-2 text-amber-400 font-bold">🔥 Ofertas Imperdíveis</button>
+            <a href="#about" onclick="toggleMobileMenu()" class="block py-2 hover:text-brand-yellow">Sobre Nós</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block py-2 hover:text-brand-yellow">Contato</a>
+        </div>
+    </header>
+
+    <section class="relative overflow-hidden bg-gradient-to-b from-brand-dark via-brand-card to-brand-dark py-12 md:py-20 border-b border-brand-border">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#FFC700_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="text-center md:text-left space-y-6">
+                    <div class="inline-flex items-center gap-2 bg-brand-yellow/10 border border-brand-yellow/30 px-3 py-1.5 rounded-full text-brand-yellow text-xs font-semibold uppercase tracking-wider">
+                        <i class="fa-solid fa-bolt"></i> Tecnologia & Inovação Premium
+                    </div>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
+                        Sua Experiência Completa na <span class="text-gradient">WPOHSTORE</span>
+                    </h1>
+                    <p class="text-gray-400 text-base sm:text-lg max-w-xl">
+                        Descubra os lançamentos mais cobiçados do mercado com preços exclusivos, garantia de fábrica e entrega rápida para todo o Brasil.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <a href="#produtos" class="gold-gradient-bg text-black font-bold px-8 py-3.5 rounded-full gold-glow hover:scale-105 transition-all text-center flex items-center justify-center gap-2">
+                            <span>Explorar Ofertas</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <button onclick="filterCategory('promocao')" class="bg-brand-card hover:bg-brand-border border border-brand-yellow/50 text-brand-yellow font-semibold px-8 py-3.5 rounded-full transition-all text-center">
+                            Ver Promoções
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Showcase -->
+                <div class="flex justify-center relative">
+                    <div class="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-brand-yellow/10 absolute -z-10 blur-3xl"></div>
+                    <img src="Gemini_Generated_Image_9f77il9f77il9f77.jpg" 
+                         alt="Banner WPOHSTORE" 
+                         class="max-w-xs sm:max-w-md w-full rounded-2xl border border-brand-yellow/30 shadow-2xl gold-glow object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-8 bg-brand-card/40 border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div class="flex flex-col items-center p-3">
+                <i class="fa-solid fa-truck-fast text-2xl text-brand-yellow mb-2"></i>
+                <h4 class="font-bold text-sm">Envio Rápido</h4>
+                <p class="text-xs text-gray-400">Entrega garantida e rastreada</p>
+            </div>
+            <div class="flex flex-col items-center p-3">
+                <i class="fa-solid fa-shield-halved text-2xl text-brand-yellow mb-2"></i>
+                <h4 class="font-bold text-sm">Compra 100% Segura</h4>
+                <p class="text-xs text-gray-400">Proteção total aos seus dados</p>
+            </div>
+            <div class="flex flex-col items-center p-3">
+                <i class="fa-solid fa-credit-card text-2xl text-brand-yellow mb-2"></i>
+                <h4 class="font-bold text-sm">Até 12x Sem Juros</h4>
+                <p class="text-xs text-gray-400">Ou 10% OFF no PIX</p>
+            </div>
+            <div class="flex flex-col items-center p-3">
+                <i class="fa-solid fa-headset text-2xl text-brand-yellow mb-2"></i>
+                <h4 class="font-bold text-sm">Suporte 24/7</h4>
+                <p class="text-xs text-gray-400">Atendimento personalizado</p>
+            </div>
+        </div>
+    </section>
+
+    <main id="produtos" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1">
+        
+        <!-- Header Seção Produtos -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2">
+                    <span class="w-2 h-8 bg-brand-yellow rounded-full inline-block"></span>
+                    Catálogo de Produtos
+                </h2>
+                <p class="text-gray-400 text-sm mt-1">Confira as melhores tecnologias disponíveis na Wpohstore</p>
+            </div>
+
+            <!-- Filtros de Categoria (Pills) -->
+            <div class="flex flex-wrap gap-2 justify-center" id="categoryButtons">
+                <button onclick="filterCategory('all')" class="cat-btn active bg-brand-yellow text-black font-semibold px-4 py-2 rounded-full text-xs transition-all">Todos</button>
+                <button onclick="filterCategory('tecnologia')" class="cat-btn bg-brand-card hover:border-brand-yellow border border-brand-border px-4 py-2 rounded-full text-xs transition-all">Tecnologia</button>
+                <button onclick="filterCategory('eletronicos')" class="cat-btn bg-brand-card hover:border-brand-yellow border border-brand-border px-4 py-2 rounded-full text-xs transition-all">Eletrônicos</button>
+                <button onclick="filterCategory('acessorios')" class="cat-btn bg-brand-card hover:border-brand-yellow border border-brand-border px-4 py-2 rounded-full text-xs transition-all">Acessórios</button>
+                <button onclick="filterCategory('promocao')" class="cat-btn bg-brand-card hover:border-brand-yellow border border-brand-border px-4 py-2 rounded-full text-xs transition-all text-amber-400">🔥 Promoções</button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Os produtos serão injetados via JavaScript -->
+        </div>
+
+        <div id="noProductsMessage" class="hidden text-center py-16">
+            <i class="fa-solid fa-box-open text-5xl text-gray-600 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-300">Nenhum produto encontrado</h3>
+            <p class="text-gray-500 text-sm mt-1">Tente pesquisar por outro termo ou selecione uma categoria diferente.</p>
+        </div>
+    </main>
+
+    <section id="about" class="bg-brand-card/60 py-16 border-t border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-white mb-4">Sobre a <span class="text-brand-yellow">WPOHSTORE</span></h2>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        A <strong>Wpohstore Loja Online</strong> nasce da paixão por inovação, tecnologia e eficiência. Nosso compromisso principal é oferecer aos nossos clientes produtos de extrema qualidade, design moderno e preços competitivos.
+                    </p>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                        Com atendimento focado na excelência e total transparência, garantimos uma jornada de compra intuitiva, segura e ágil do clique até a entrega no seu endereço.
+                    </p>
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="bg-brand-dark p-4 rounded-xl border border-brand-border">
+                            <span class="text-2xl font-bold text-brand-yellow">+10k</span>
+                            <p class="text-xs text-gray-400 mt-1">Clientes Satisfeitos</p>
+                        </div>
+                        <div class="bg-brand-dark p-4 rounded-xl border border-brand-border">
+                            <span class="text-2xl font-bold text-brand-yellow">100%</span>
+                            <p class="text-xs text-gray-400 mt-1">Produtos Originais</p>
+                        </div>
+                        <div class="bg-brand-dark p-4 rounded-xl border border-brand-border">
+                            <span class="text-2xl font-bold text-brand-yellow">4.9/5</span>
+                            <p class="text-xs text-gray-400 mt-1">Avaliação Média</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <img src="Gemini_Generated_Image_9f77il9f77il9f77.jpg" 
+                         alt="Wpohstore Quem Somos" 
+                         class="rounded-2xl border border-brand-border max-w-sm w-full object-cover shadow-xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="cartModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="fixed top-0 right-0 h-full w-full max-w-md bg-brand-dark border-l border-brand-border shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 cart-drawer" id="cartDrawer">
+            
+            <!-- Cart Header -->
+            <div class="p-4 border-b border-brand-border flex items-center justify-between bg-brand-card">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping text-brand-yellow"></i>
+                    <h3 class="font-bold text-lg text-white">Seu Carrinho</h3>
+                </div>
+                <button onclick="closeCart()" class="text-gray-400 hover:text-white text-xl p-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- Itens injetados via JS -->
+            </div>
+
+            <!-- Cart Footer -->
+            <div class="p-4 border-t border-brand-border bg-brand-card space-y-4">
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between text-gray-400">
+                        <span>Subtotal:</span>
+                        <span id="cartSubtotal">R$ 0,00</span>
+                    </div>
+                    <div class="flex justify-between text-gray-400">
+                        <span>Frete:</span>
+                        <span class="text-emerald-400 font-semibold">GRÁTIS</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-white pt-2 border-t border-brand-border">
+                        <span>Total:</span>
+                        <span id="cartTotal" class="text-brand-yellow text-lg">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <button onclick="checkout()" class="w-full gold-gradient-bg text-black font-bold py-3.5 rounded-xl gold-glow hover:opacity-95 transition-all text-center flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                    <span>Finalizar Compra Segura</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-brand-card border border-brand-yellow text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 z-50 transform translate-y-20 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-brand-yellow text-xl"></i>
+        <span id="toastMessage" class="text-sm font-medium">Produto adicionado ao carrinho!</span>
+    </div>
+
+    <footer id="contact" class="bg-black border-t border-brand-border text-gray-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                
+                <!-- Coluna 1: Logo e Marca -->
+                <div class="space-y-4">
+                    <img src="Gemini_Generated_Image_9f77il9f77il9f77.jpg" 
+                         alt="Wpohstore Logo Footer" 
+                         class="h-12 w-auto object-contain">
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        WPOHSTORE - Loja Online Oficial. A melhor tecnologia e acessórios selecionados especialmente para você.
+                    </p>
+                    <div class="flex space-x-3 text-lg">
+                        <a href="#" class="w-9 h-9 rounded-full bg-brand-card flex items-center justify-center text-gray-300 hover:text-brand-yellow hover:border hover:border-brand-yellow transition-all"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-brand-card flex items-center justify-center text-gray-300 hover:text-brand-yellow hover:border hover:border-brand-yellow transition-all"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-brand-card flex items-center justify-center text-gray-300 hover:text-brand-yellow hover:border hover:border-brand-yellow transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Navegação Rápida -->
+                <div>
+                    <h3 class="text-white font-bold text-base mb-4 border-l-2 border-brand-yellow pl-2">Links Úteis</h3>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" onclick="filterCategory('all')" class="hover:text-brand-yellow transition-colors">Início</a></li>
+                        <li><a href="#produtos" class="hover:text-brand-yellow transition-colors">Catálogo de Produtos</a></li>
+                        <li><a href="#about" class="hover:text-brand-yellow transition-colors">Sobre a Wpohstore</a></li>
+                        <li><a href="#" class="hover:text-brand-yellow transition-colors">Política de Privacidade</a></li>
+                        <li><a href="#" class="hover:text-brand-yellow transition-colors">Termos e Condições</a></li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 3: Atendimento -->
+                <div>
+                    <h3 class="text-white font-bold text-base mb-4 border-l-2 border-brand-yellow pl-2">Atendimento</h3>
+                    <ul class="space-y-2 text-xs">
+                        <li class="flex items-center gap-2"><i class="fa-brands fa-whatsapp text-brand-yellow"></i> (24) 99999-5759</li>
+                        <li class="flex items-center gap-2"><i class="fa-regular fa-envelope text-brand-yellow"></i> wpohstore@gmail.com.br</li>
+                        <li class="flex items-center gap-2"><i class="fa-regular fa-clock text-brand-yellow"></i> Seg a Sex: 09h às 17h</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-brand-yellow"></i> Rio de Janeiro - RJ, Brasil</li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 4: Pagamento e Segurança -->
+                <div>
+                    <h3 class="text-white font-bold text-base mb-4 border-l-2 border-brand-yellow pl-2">Pagamento & Segurança</h3>
+                    <p class="text-xs text-gray-400 mb-3">Aceitamos as principais formas de pagamento:</p>
+                    <div class="flex flex-wrap gap-2 text-xl text-gray-300 mb-4">
+                        <span class="bg-brand-card px-2 py-1 rounded border border-brand-border"><i class="fa-brands fa-pix text-emerald-400"></i></span>
+                        <span class="bg-brand-card px-2 py-1 rounded border border-brand-border"><i class="fa-brands fa-cc-visa"></i></span>
+                        <span class="bg-brand-card px-2 py-1 rounded border border-brand-border"><i class="fa-brands fa-cc-mastercard"></i></span>
+                        <span class="bg-brand-card px-2 py-1 rounded border border-brand-border"><i class="fa-solid fa-barcode"></i></span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-emerald-400 bg-emerald-950/30 p-2 rounded-lg border border-emerald-800/40">
+                        <i class="fa-solid fa-shield-check text-lg"></i>
+                        <span>Site Criptografado & Selo SSL de Segurança</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Direitos Autorais -->
+            <div class="pt-8 border-t border-brand-border flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p>&copy; 2026 <strong>WPOHSTORE - LOJA ONLINE</strong>. Todos os direitos reservados. Razão Social: Wpohstore Ltda.</p>
+                <p class="flex items-center gap-1">Desenvolvido com <i class="fa-solid fa-heart text-brand-yellow"></i> para alto desempenho.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Array de Produtos Mockados com dados e imagens realistas
+        const products = [
+            {
+                id: 1,
+                name: "Smartwatch Wpoh Ultra Titanium 49mm",
+                category: "tecnologia",
+                price: 349.90,
+                oldPrice: 499.90,
+                rating: 4.9,
+                reviews: 128,
+                badge: "Mais Vendido",
+                image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 2,
+                name: "Fone TWS Wpoh Sound Pro ANC Noise Cancelling",
+                category: "eletronicos",
+                price: 189.90,
+                oldPrice: 279.90,
+                rating: 4.8,
+                reviews: 95,
+                badge: "Oferta",
+                image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 3,
+                name: "Carregador Magnético Indução Fast Charge 15W",
+                category: "acessorios",
+                price: 99.90,
+                oldPrice: 149.90,
+                rating: 4.7,
+                reviews: 64,
+                badge: "Lançamento",
+                image: "https://images.unsplash.com/photo-1622445268465-843d63d66649?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 4,
+                name: "Teclado Mecânico Gamer RGB Swappable Wpoh",
+                category: "tecnologia",
+                price: 289.90,
+                oldPrice: 399.90,
+                rating: 5.0,
+                reviews: 210,
+                badge: "Promoção",
+                image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 5,
+                name: "Caixa de Som Bluetooth Wpoh Bass Boom 40W",
+                category: "eletronicos",
+                price: 259.90,
+                oldPrice: 349.90,
+                rating: 4.9,
+                reviews: 87,
+                badge: "Destaque",
+                image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 6,
+                name: "Suporte Ergonômico de Alumínio para Notebook",
+                category: "acessorios",
+                price: 119.90,
+                oldPrice: 169.90,
+                rating: 4.6,
+                reviews: 42,
+                badge: null,
+                image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 7,
+                name: "Mouse Sem Fio Ultra Precision Ergostyle",
+                category: "tecnologia",
+                price: 139.90,
+                oldPrice: 199.90,
+                rating: 4.8,
+                reviews: 76,
+                badge: "Oferta",
+                image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 8,
+                name: "Lâmpada Inteligente RGB Wi-Fi Wpoh Smart",
+                category: "eletronicos",
+                price: 69.90,
+                oldPrice: 99.90,
+                rating: 4.7,
+                reviews: 153,
+                badge: "Economia",
+                image: "https://images.unsplash.com/photo-1550985616-10810253b84d?auto=format&fit=crop&w=600&q=80"
+            }
+        ];
+
+        // Estado Global da Aplicação
+        let cart = [];
+        let favorites = [];
+        let activeCategory = 'all';
+
+        // Renderizar Produtos
+        function renderProducts(itemsToRender) {
+            const grid = document.getElementById('productsGrid');
+            const noProductsMsg = document.getElementById('noProductsMessage');
+
+            if (itemsToRender.length === 0) {
+                grid.innerHTML = '';
+                noProductsMsg.classList.remove('hidden');
+                return;
+            }
+
+            noProductsMsg.classList.add('hidden');
+            grid.innerHTML = itemsToRender.map(product => {
+                const isFav = favorites.includes(product.id);
+                return `
+                    <div class="bg-brand-card rounded-2xl border border-brand-border p-4 flex flex-col justify-between transition-all duration-300 gold-glow-hover group">
+                        <div class="relative overflow-hidden rounded-xl mb-4 bg-brand-dark h-48 flex items-center justify-center">
+                            ${product.badge ? `<span class="absolute top-2 left-2 z-10 bg-brand-yellow text-black text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">${product.badge}</span>` : ''}
+                            <button onclick="toggleFav(${product.id})" class="absolute top-2 right-2 z-10 bg-brand-dark/80 p-2 rounded-full text-gray-400 hover:text-rose-500 transition-colors">
+                                <i class="${isFav ? 'fa-solid text-rose-500' : 'fa-regular'} fa-heart"></i>
+                            </button>
+                            <img src="${product.image}" 
+                                 alt="${product.name}" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/16161A/FFC700?text=WPOHSTORE'">
+                        </div>
+
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-1 text-amber-400 text-xs mb-1">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span class="font-bold">${product.rating}</span>
+                                    <span class="text-gray-500">(${product.reviews})</span>
+                                </div>
+                                <h3 class="font-bold text-sm text-white line-clamp-2 mb-2 group-hover:text-brand-yellow transition-colors">${product.name}</h3>
+                            </div>
+
+                            <div class="mt-3 pt-3 border-t border-brand-border/60">
+                                <div class="flex items-baseline gap-2 mb-3">
+                                    <span class="text-lg font-extrabold text-brand-yellow">R$ ${product.price.toFixed(2).replace('.', ',')}</span>
+                                    <span class="text-xs text-gray-500 line-through">R$ ${product.oldPrice.toFixed(2).replace('.', ',')}</span>
+                                </div>
+
+                                <button onclick="addToCart(${product.id})" class="w-full bg-brand-dark border border-brand-yellow/50 hover:bg-brand-yellow hover:text-black text-brand-yellow font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs">
+                                    <i class="fa-solid fa-cart-plus text-sm"></i>
+                                    <span>Adicionar ao Carrinho</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filtro por Categoria
+        function filterCategory(category) {
+            activeCategory = category;
+            
+            // Atualizar botões
+            const buttons = document.querySelectorAll('.cat-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-brand-yellow', 'text-black', 'active');
+                btn.classList.add('bg-brand-card', 'border-brand-border');
+            });
+
+            if (category === 'all') {
+                renderProducts(products);
+            } else if (category === 'promocao') {
+                const promoProducts = products.filter(p => p.badge !== null);
+                renderProducts(promoProducts);
+            } else {
+                const filtered = products.filter(p => p.category === category);
+                renderProducts(filtered);
+            }
+        }
+
+        // Busca Interativa
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        function handleSearchMobile() {
+            const query = document.getElementById('searchInputMobile').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        // Adicionar ao Carrinho
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const cartItem = cart.find(item => item.id === productId);
+
+            if (cartItem) {
+                cartItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+
+            updateCartUI();
+            showToast(`"${product.name}" adicionado ao carrinho!`);
+        }
+
+        // Atualizar Quantidade no Carrinho
+        function updateQuantity(productId, delta) {
+            const cartItem = cart.find(item => item.id === productId);
+            if (!cartItem) return;
+
+            cartItem.quantity += delta;
+            if (cartItem.quantity <= 0) {
+                cart = cart.filter(item => item.id !== productId);
+            }
+
+            updateCartUI();
+        }
+
+        // Remover item do Carrinho
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        // Atualizar Interface do Carrinho
+        function updateCartUI() {
+            const cartCount = document.getElementById('cartCount');
+            const cartHeaderTotal = document.getElementById('cartHeaderTotal');
+            const cartItemsContainer = document.getElementById('cartItemsContainer');
+            const cartSubtotal = document.getElementById('cartSubtotal');
+            const cartTotal = document.getElementById('cartTotal');
+
+            const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+            const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+            cartCount.textContent = totalItems;
+            cartHeaderTotal.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+            cartSubtotal.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+            cartTotal.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="fa-solid fa-cart-flatbed text-4xl mb-3 text-gray-600"></i>
+                        <p class="text-sm">Seu carrinho está vazio.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex items-center gap-3 bg-brand-card p-3 rounded-xl border border-brand-border">
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-lg object-cover bg-brand-dark">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
+                        <p class="text-xs text-brand-yellow font-extrabold mt-1">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                        
+                        <div class="flex items-center gap-2 mt-2">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded bg-brand-dark border border-brand-border flex items-center justify-center text-xs text-gray-300 hover:border-brand-yellow">-</button>
+                            <span class="text-xs font-bold text-white">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded bg-brand-dark border border-brand-border flex items-center justify-center text-xs text-gray-300 hover:border-brand-yellow">+</button>
+                        </div>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-gray-500 hover:text-rose-500 p-2">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Toggle Favoritos
+        function toggleFav(productId) {
+            if (favorites.includes(productId)) {
+                favorites = favorites.filter(id => id !== productId);
+            } else {
+                favorites.push(productId);
+            }
+            document.getElementById('favCount').textContent = favorites.length;
+            renderProducts(products);
+        }
+
+        // Controladores do Modal do Carrinho
+        function openCart() {
+            const modal = document.getElementById('cartModal');
+            const drawer = document.getElementById('cartDrawer');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                drawer.classList.remove('translate-x-full');
+            }, 10);
+        }
+
+        function closeCart() {
+            const modal = document.getElementById('cartModal');
+            const drawer = document.getElementById('cartDrawer');
+            drawer.classList.add('translate-x-full');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Finalizar Compra Simulação
+        function checkout() {
+            if (cart.length === 0) {
+                showToast("Seu carrinho está vazio!");
+                return;
+            }
+            alert("Obrigado por comprar na WPOHSTORE! Redirecionando para o Checkout Seguro...");
+            cart = [];
+            updateCartUI();
+            closeCart();
+        }
+
+        // Toggle Menu Mobile
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Exibir Notificação Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.textContent = message;
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Inicialização ao carregar página
+        window.onload = function() {
+            renderProducts(products);
+            updateCartUI();
+        };
+    </script>
+</body>
+</html>
