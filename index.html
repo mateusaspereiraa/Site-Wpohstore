@@ -209,10 +209,17 @@
 
             <!-- CATEGORY FILTER BUTTONS -->
             <div class="flex flex-wrap gap-2 mb-8 border-b border-gray-800 pb-4">
-                <button onclick="filterCategory('todos')" class="cat-filter-btn active bg-brand-gold text-black font-bold px-4 py-2 rounded-full text-sm transition">Todos</button>
-                <button onclick="filterCategory('tecnologia')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Tecnologia</button>
+                <button onclick="filterCategory('beleza e cosméticos')" class="cat-filter-btn active bg-brand-gold text-black font-bold px-4 py-2 rounded-full text-sm transition">Todos</button>
+                <button onclick="filterCategory('infantil')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Tecnologia</button>
                 <button onclick="filterCategory('eletronicos')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Eletrônicos</button>
-                <button onclick="filterCategory('acessorios')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Acessórios</button>
+                <button onclick="filterCategory('acessorios de celulares')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Acessórios</button>
+                <button onclick="filterCategory('casa e construção')" class="cat-filter-btn active bg-brand-gold text-black font-bold px-4 py-2 rounded-full text-sm transition">Todos</button>
+                <button onclick="filterCategory('moda feminina e masculina')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Tecnologia</button>
+                <button onclick="filterCategory('pets')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Eletrônicos</button>
+                <button onclick="filterCategory('ferramentas')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Acessórios</button>
+                <button onclick="filterCategory('cama, mesa e banho')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Eletrônicos</button>
+                <button onclick="filterCategory('cozinha')" class="cat-filter-btn bg-brand-darkCard text-gray-300 font-medium px-4 py-2 rounded-full text-sm hover:border-brand-gold border border-transparent transition">Acessórios</button>
+            
             </div>
 
             <!-- CATALOG PRODUCTS GRID -->
@@ -358,6 +365,8 @@
                     </a>
                 </div>
             </div>
+            <button onclick="switchTab('Contato')" class="bg-brand-gold hover:bg-brand-goldHover text-black font-bold px-12 py-6.5 rounded-full shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-3.5">
+                            C  O  N  T  A  T  O <i class="fa-solid fa-arrow-right"> </i> 2 4 9 9 8 5 2 7 9 3 9 </i>
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-gray-800/60 text-center text-xs text-gray-500">
             &copy; 2026 Wpohstore (Loja Online). Todos os direitos reservados.
@@ -368,15 +377,23 @@
     <script>
         // PRODUCTS DATABASE
         const products = [
-            { id: 1, name: "Smartwatch Sport Black Wpoh", category: "tecnologia", price: 189.90, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg" },
-            { id: 2, name: "Fone Bluetooth Noise Cancelling", category: "eletronicos", price: 149.90, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg" },
-            { id: 3, name: "Suporte Veicular Magnético", category: "acessorios", price: 49.90, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg" },
-            { id: 4, name: "Carregador Rápido PowerBank 20.000mAh", category: "acessorios", price: 129.90, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg" },
-            { id: 5, name: "Teclado Mecânico RGB Compacto", category: "tecnologia", price: 229.90, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg" },
-            { id: 6, name: "Mouse Sem Fio Ergonômico", category: "tecnologia", price: 89.90, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg" }
+            { id: 1, name: "Sérum anti-idade", category: "beleza", price: 125.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 2, name: "Torneira Gourmet 2 Temperaturas", category: "casa e construção", price: 129.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 3, name: "Espelho Adnet", category: "casa e construção", price: 76.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 4, name: "Sapateira Portátil", category: "casa e construção", price: 49.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 5, name: "Camisa do Botafogo", category: "Moda Feminina", price: 89.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 6, name: "Placa de Cão Bravo", category: "Pets", price: 29.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 7, name: "Comedouro e Bebedouro", category: "Pets", price: 64.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 8, name: "Luva Removedora de Pelo", category: "Pets", price: 39.00, image: "Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},  
+            { id: 9, name: "Carregador Portátil(IPHONE)", category: "Acessórios de Celulares", price: 81.00, image:"Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},  
+            { id: 10, name: "Case Iphone 11", category: "Acessórios de Celulares", price: 29.00, image:"Geminia_Generated_Image"},
+            { id: 11, name: "Kit Enxoval Catavento", category:  "Infantil",  price: 99.00,  image:"Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},
+            { id: 12, name: "Maleta de Ferramentas", category: "Ferramentas", price: 80.00, image:"Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},  
+            { id: 13, name: "Cabide de Aço", category: "Vestuário", price: 65.00, image:"Gemini_Generated_Image_9f77il9f77il9f77_2.jpg"},  
+            { id: 14, name: "Nicho de Tempero", category: "Cozinha", price: 45.00, image:"Gemini_Generated_Image"},
+            { id: 15, name: "Kit de Potes de Plastico", category: "Cozinha", price: 58.00, image:"Gemini_Generated_Image"},
         ];
-
-        let cart = [];
+            let cart = [];
         let activeCategory = 'todos';
 
         // TAB SWITCHING FUNCTION
